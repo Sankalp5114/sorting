@@ -1,14 +1,14 @@
 import React,{Component} from 'react'
 import './Home.css'
 
-//import Navbar from '../components/Navbar'
+import Navbar from '../components/Navbar'
 
 class Home extends Component{
   render(){
   return (
     <>
     <body className='background'>
-      {/* <Navbar /> */}
+      <Navbar />
       <div className='container'>
         <div className='name'>
           Sorting Visualizer
