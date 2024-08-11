@@ -51,7 +51,7 @@ html {
 
 .content {
   display: flex;
-  margin-top: 100vh;
+  margin-top: 27.5vh;
   height: 90vh;
   background: #000000f6;
   justify-content: space-evenly;
@@ -209,4 +209,31 @@ html {
 .button:active:before {
   transform: translateZ(-20px);
   top: 12px;
+}
+#header {
+  font-family: 'Oxygen', monospace, Courier;
+  color: white;
+  padding-right: 15px;
+  margin-right: 20%;
+  margin-top: 36vh;
+  font-size: 6vw;
+  letter-spacing: 5px;
+  position: relative;
+  text-align: right;
+  font-weight: bold;
+  border-right: 8px solid #144141;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+}
+
+@media only screen and (max-width: 850px) {
+  #header {
+      font-size: 10vw;
+      margin-right: 10%;
+  }
 }

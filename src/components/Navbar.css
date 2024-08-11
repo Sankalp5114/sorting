@@ -6,34 +6,34 @@ nav{
     top: 0px;
     height: 85px;
     width: 100%;
-    background: #0d1e46dc;
+    background: linear-gradient(135deg, #054d4d, #02142b);
     opacity: 1;
     padding: 20px 80px;
     z-index: 100;
 }
-#navbar{
+#sankalp{
     display: flex;
     align-items: center;
     justify-content: center;
 }
-#navbar li{
+#sankalp li{
     list-style: none;
     padding: 0 20px;
     position: relative;
 }
-#navbar li a{
+#sankalp li a{
     text-decoration: none;
     font-size: 1.3rem;
     font-weight: 600;
     color: #fff;
     transition: 0.3s ease-in-out;
 }
-#navbar li a:hover,
-#navbar li a.active{
+#sankalp li a:hover,
+#sankalp li a.active{
     color: #17cf97;
 }
-#navbar li a:hover::after,
-#navbar li a.active::after{
+#sankalp li a:hover::after,
+#sankalp li a.active::after{
     content: "";
     width: 60%;
     height: 2px;
@@ -56,7 +56,7 @@ nav{
     font-size: 20px;
 }
 /* @media screen and (max-width:769px){
-    #navbar{
+    #sankalp{
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -72,10 +72,10 @@ nav{
         transition: 0.3s ease-in-out;
         z-index: 100;
     }
-    #navbar.active{
+    #sankalp.active{
         right: 0px;
     }
-    #navbar li{
+    #sankalp li{
         margin-bottom: 25px;
     }
     #mobile{

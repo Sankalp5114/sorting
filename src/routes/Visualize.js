@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import selectionSort from "../algorithms/SelectionSort";
 import mergeSort from "../algorithms/MergeSort";
 import quickSort from "../algorithms/QuickSort";
+import bubbleSort from "../algorithms/BubbleSort";
+import insertionSort from "../algorithms/InsertionSort";
+import heapSort from "../algorithms/HeapSort";
 import { NavLink } from "react-router-dom";
 const springAnim = {
     type: "spring",
@@ -15,14 +18,14 @@ class Visualize extends Component{
         super();
         this.state={
             arr:[],
-            method:"Algorithms",
+            method:localStorage.getItem("selectedAlgorithm") || "Algorithms",
             length:0,
             compare:{
                 i:null,
                 j:null
             },
             sorted:[],
-            speed:100
+            speed:600
         }
 
     }
@@ -65,12 +68,18 @@ class Visualize extends Component{
             document.getElementById('error').style="display:block";
         }
         else{
-            if(this.state.method=="Selection Sort")
+            if(this.state.method=="Bubble Sort")
+                results=bubbleSort(arr,length);
+            else if(this.state.method=="Selection Sort")
                 results=selectionSort(arr,length);
             else if(this.state.method=="Merge Sort")
                 results=mergeSort(arr,length);
             else if(this.state.method=="Quick Sort")
                 results=quickSort(arr,length);
+            else if(this.state.method=="Insertion Sort")
+                results=insertionSort(arr,length);
+            else if(this.state.method=="Heap Sort")
+                results=heapSort(arr,length);
             for(let i=0;i<results.length;i++){
                 setTimeout(()=>{
                     this.setState({
@@ -79,7 +88,6 @@ class Visualize extends Component{
                 },this.state.speed*i)
             }
         }
-
     }
 
     changeSpeed=(e)=>{
@@ -87,59 +95,63 @@ class Visualize extends Component{
             speed:1100-e.target.value
         })
     }
+      
     render(){
         return(
+            <>
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"></link>
             <div>
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <a class="navbar-brand" href="#">Visualize</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <a className="navbar-brand" href="/">Home</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
                     </button>
 
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mr-auto">
-                        <li className="nav-item">
-                        <NavLink exact to="/" className="nav-link">Home</NavLink>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul className="navbar-nav mr-auto">
+                        <li className="nav-item ">
+                            <a className="nav-link" href="#" onClick={this.randomize}>Randomize<span className="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item ">
-                            <a class="nav-link" href="#" onClick={this.randomize}>Randomize <span class="sr-only">(current)</span></a>
-                        </li>
-                        
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {this.state.method}
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#" onClick={()=>this.setState({method:"Selection Sort"})}>Selection Sort</a>
-                                <a class="dropdown-item" href="#" onClick={()=>this.setState({method:"Merge Sort"})}>Merge sort</a>
-                                <a class="dropdown-item" href="#" onClick={()=>this.setState({method:"Quick Sort"})}>Quick sort</a>
+                            <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a className="dropdown-item" href="#" onClick={()=>this.setState({method:"Bubble Sort"})}>Bubble Sort</a>
+                                <a className="dropdown-item" href="#" onClick={()=>this.setState({method:"Quick Sort"})}>Quick Sort</a> 
+                                <a className="dropdown-item" href="#" onClick={()=>this.setState({method:"Merge Sort"})}>Merge Sort</a>
+                                <a className="dropdown-item" href="#" onClick={()=>this.setState({method:"Insertion Sort"})}>Insertion Sort</a>
+                                <a className="dropdown-item" href="#" onClick={()=>this.setState({method:"Selection Sort"})}>Selection Sort</a>
+                                <a className="dropdown-item" href="#" onClick={()=>this.setState({method:"Heap Sort"})}>Heap Sort</a> 
                             </div>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Controls
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li class="ml-3 nav-item">
+                            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li className="ml-3 nav-item">
                                     <input onChange={this.changeArray} type="range" min="2" max={Math.floor(window.screen.width/50)} defaultValue={Math.floor((window.screen.width/50)/2)} id="changeSize" />
-                                    <a class="nav-link">Increase Array Size</a>
+                                    <a className="nav-link">Increase Array Size</a>
                                 </li>
-                                <li class="ml-3 nav-item">
+                                <li className="ml-3 nav-item">
                                     <input onChange={this.changeSpeed} type="range" min="100" max={1000} defaultValue={500} id="changeSize"/>
-                                    <a class="nav-link">Increase Speed</a>
+                                    <a className="nav-link">Increase Speed</a>
                                 </li>
                             </div>
                         </li>
-                        <div id="error" class="alert alert-danger" style={{marginLeft:"10px",display:"none"}} role="alert">
+        
+                        <div id="error" className="alert alert-danger" style={{marginLeft:"10px",display:"none"}} role="alert">
                             Select an algorithm first!
                         </div>
                         </ul>
-                        <form class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={this.sortFunc}>Sort</button>
+                        <form className="form-inline my-2 my-lg-0">
+                        <button className="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={this.sortFunc}>Sort</button>
                         </form>
                     </div>
+                    
                     </nav>
-              <div className="bars" id="bars" style={{margin:"20px"}}>
+                <div className="bars" id="bars" style={{margin:"20px"}}>
                     {
                     (this.state.arr.map((element,index) =>
                     <motion.div
@@ -156,6 +168,7 @@ class Visualize extends Component{
                     ))}
                 </div>
             </div>
+            </>
         )
     }
 }
