@@ -90,7 +90,7 @@ class Home extends Component {
                         <div className="back">
                             <div>
                                 <p>Bubble sort is a simple sorting algorithm that repeatedly steps through a list, compares adjacent elements, and swaps them if they are in the wrong order.</p>
-                                <button className="button">Visualize</button>
+                                <button className="button" onClick={() => this.setSortingMethod("Bubble Sort")}>Visualize</button>
                             </div>
                         </div>
                     </a>
@@ -101,7 +101,7 @@ class Home extends Component {
                         <div className="back">
                             <div>
                                 <p>Quick sort is a divide-and-conquer sorting algorithm that selects a pivot element, partitions the array into elements less than and greater than the pivot, and recursively sorts the partitions.</p>
-                                <button className="button"onClick={() => this.setSortingMethod("Quick Sort")}>Visualize</button>
+                                <button className="button" onClick={() => this.setSortingMethod("Quick Sort")}>Visualize</button>
                             </div>
                         </div>
                     </a>
@@ -123,7 +123,7 @@ class Home extends Component {
                         <div className="back">
                             <div>
                                 <p>Insertion sort is a sorting algorithm that builds the final sorted array one item at a time by repeatedly inserting the current element into its correct position among the previously sorted elements.</p>
-                                <button className="button">Visualize</button>
+                                <button className="button" onClick={() => this.setSortingMethod("Insertion Sort")}>Visualize</button>
                             </div>
                         </div>
                     </a>
@@ -145,7 +145,7 @@ class Home extends Component {
                         <div className="back">
                             <div>
                                 <p>Heap sort is a comparison-based sorting algorithm that uses a binary heap data structure to repeatedly extract the maximum (or minimum) element and build a sorted array.</p>
-                                <button className="button">Visualize</button>
+                                <button className="button" onClick={() => this.setSortingMethod("Heap Sort")}>Visualize</button>
                             </div>
                         </div>
                     </a>
