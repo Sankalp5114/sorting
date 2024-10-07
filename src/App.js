@@ -2,6 +2,10 @@ import { BrowserRouter as Router,Routes,Route } from 'react-router-dom';
 //import Login from './routes/Login.js';
 import Visualize from './routes/Visualize.js';
 import Home from './routes/Home.js';
+import User from './routes/User.js';
+import Sorting from './routes/Sorting.js';
+import Searching from './routes/Searching.js';
+import Svisualize from './routes/Svisualize.js';
 
 function App() {
   return (
@@ -9,8 +13,11 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} /> 
-          <Route path="/visualize" element={<Visualize />} />
-          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/sorting-visualize" element={<Visualize />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/sorting" element={<Sorting />} />
+          <Route path="/searching" element={<Searching />} />
+          <Route path="/searching-visualize" element={<Svisualize />} />
         </Routes>
       </Router>
     </>
