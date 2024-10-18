@@ -1,0 +1,170 @@
+.about-background {
+    position: relative;
+    height: 150vh;
+    background-color: #000000f6;
+}
+
+.about-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #000000f6;
+}
+
+.about-container {
+    text-align: center; /* Center-aligns text */
+    color: white;
+    padding-top: 7rem;
+    margin-top: 10vh;
+}
+
+.about-title {
+    font-size: 3rem;
+    color: white;
+    font-family: 'Oxygen', monospace, Courier;
+    letter-spacing: 5px;
+    border-right: 8px solid #144141;
+    text-align: center; /* Center-aligns title */
+    margin: 0 auto; /* Centers the title horizontally */
+}
+
+.about-description,
+.tech-stack-description {
+    font-size: 1.2rem;
+    margin: 0 auto;
+    width: 70%; /* Keep the same width for consistency */
+    text-align: center; /* Center-aligns description text */
+    color: white;
+    margin-top: 2rem;
+}
+
+.tech-stack-title,
+.team-section h2,
+.contact-section h2 {
+    font-size: 2rem;
+    margin-top: 50px;
+    color: white;
+    text-align: center; /* Center-aligns section titles */
+    margin-left: 0; /* Reset margin-left for centering */
+}
+
+.team-section {
+    margin: 50px 0;
+    text-align: center; /* Center-aligns text in the team section */
+}
+
+.team-cards {
+    display: flex;
+    justify-content: center; /* Centers the flex items */
+    gap: 40px;
+}
+
+.team-member {
+    text-align: center; /* Center-aligns text in team member */
+}
+
+.team-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.team-member h3 {
+    font-size: 1.5rem;
+    color: white;
+    margin-top: 10px;
+}
+
+.team-member p {
+    font-size: 1rem;
+    color: #ccc;
+}
+
+.contact-section {
+    margin-top: 50px;
+    text-align: center; /* Center-aligns text in the contact section */
+    margin-left: 0; /* Reset margin-left for centering */
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left; /* Keep this left-aligned for form elements */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.contact-button {
+    background-color: #1a57e6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: 300ms ease;
+}
+
+.contact-button:hover {
+    background-color: #144141;
+    transform: translateZ(10px);
+}
+
+/* Team Member Circular Images on Hover */
+.team-member:hover .team-img {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+@media only screen and (max-width: 850px) {
+    .about-title {
+        font-size: 10vw;
+        margin: 0 auto; /* Center title on smaller screens */
+    }
+
+    .about-description,
+    .tech-stack-description {
+        width: 90%; /* Keep same width for consistency */
+    }
+
+    .team-cards {
+        flex-direction: column; /* Stack team members vertically */
+    }
+
+    .team-member {
+        margin-bottom: 2rem;
+    }
+}

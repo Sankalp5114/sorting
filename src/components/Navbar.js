@@ -29,7 +29,7 @@ class Navbar extends Component{
       <div>
         <ul id="sankalp" className={this.state.clicked ? "#sankalp active" : "#sankalp"}>
           <CustomLink to="/">Home</CustomLink>
-          <CustomLink to="/sorting-visualize">Visualize</CustomLink>
+          <CustomLink to="/about">About Us</CustomLink>
         </ul>
       </div>
       {/* <div id="mobile" onClick={this.handleClick}>
