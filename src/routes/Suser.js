@@ -109,7 +109,7 @@ class Suser extends Component {
       }
     } else {
       // Set an error message in the state instead of using alert
-      this.setState({ errorMessage: 'Please enter a valid target value.' });
+      this.setState({ errorMessage: 'Enter a target value.' });
       document.getElementById('error').style.display = 'block';
     }
   };
@@ -422,7 +422,7 @@ class Suser extends Component {
                 <div
                   id="error"
                   className="alert alert-danger"
-                  style={{ marginLeft: '10px', display: 'none' }}
+                  style={{ marginLeft: '10px', display: 'none' ,width: '250px',position:"absolute",right:'42%',height:'50px'}}
                   role="alert"
                 >
                   {this.state.errorMessage}
