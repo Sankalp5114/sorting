@@ -1,5 +1,5 @@
 
-.bar{
+.bar1{
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding-top: 7px;
@@ -11,18 +11,17 @@
     margin-left:6px;
     background-color:#5bc9b1;
 }
-.bar-sorted{
+.bar1-sorted{
     background-color:#57a846;
-    
 }
-.bar-swap{
+.bar1-swap{
     background-color:#b979ec;
 }
-.bar-min{
+.bar1-min{
     background-color: red;
 }
 
-.bars {
+.bars1 {
     background-color: #000000f6;
     display: flex;
     justify-content: center;
@@ -45,7 +44,7 @@
     border: 2px solid white;
   
 }
-.bars .bar {
+.bars1 .bar1 {
     width: 40px;
     margin: 0 5px; 
     position: relative;
@@ -54,14 +53,14 @@
     align-items: center;
   }
   
-  .bars .bar .bar-number {
+  .bars1 .bar1 .bar1-number {
     position: absolute;
     bottom: -50px;  
     text-align: center;
     font-weight: bold;
   }
   
-  .bars .bar .bar-height {
+  .bars1 .bar1 .bar1-height {
     height: 100px; 
     transform: rotate(180deg);
   }
@@ -78,16 +77,15 @@
     color: #ffffff;
 }
 
-.bar {
+.bar1 {
     background-color: #5bc9b1; /* Default color */
     transition: height 0.3s ease, background-color 0.3s ease;
   }
   
-  .bar.comparing {
+  .bar1.comparing {
     background-color: #b979ec; /* Color for comparing bars */
   }
   
-  .bar.found {
+  .bar1.found {
     background-color: #57a846; /* Color for the found bar */
   }
-  

@@ -6,6 +6,7 @@ import User from './routes/User.js';
 import Sorting from './routes/Sorting.js';
 import Searching from './routes/Searching.js';
 import Svisualize from './routes/Svisualize.js';
+import Suser from './routes/Suser.js';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
           <Route path="/" element={<Home />} /> 
           <Route path="/sorting-visualize" element={<Visualize />} />
           <Route path="/user" element={<User />} />
+          <Route path="/Suser" element={<Suser />} />
+
           <Route path="/sorting" element={<Sorting />} />
           <Route path="/searching" element={<Searching />} />
           <Route path="/searching-visualize" element={<Svisualize />} />

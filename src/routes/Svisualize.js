@@ -186,12 +186,13 @@ const springAnim = {
   stiffness: 300,
 };
 
+
 class Visualize extends Component {
   constructor() {
     super();
     this.state = {
       arr: [],
-      method: 'Linear Search', // Set default algorithm to Linear Search
+      method: localStorage.getItem('SearchingAlgorithm') || 'Linear Search', // Set default algorithm to Linear Search
       length: 0,
       comparisonCount: 0,
       speed: 600,
@@ -200,6 +201,11 @@ class Visualize extends Component {
       currentStep: 0,
       results: [],
       arraySizeInput: Math.floor(window.innerWidth / 50 / 2),
+      low: null, // Initialize low
+      mid: null, // Initialize mid
+      high: null, // Initialize high
+      comparisonResult: '', // Initialize comparisonResult
+      target: null, // Store target value
     };
   }
 
@@ -218,14 +224,27 @@ class Visualize extends Component {
       isSorting: false,
       currentStep: 0,
       results: [],
+      low: null,
+      mid: null,
+      high: null,
+      comparisonResult: '',
+      target: null,
     });
   };
 
   handleArraySizeInput = (e) => {
-    const size = Math.max(2, Math.min(Math.floor(window.screen.width / 50), parseInt(e.target.value)));
+    const size = Math.max(
+      2,
+      Math.min(Math.floor(window.screen.width / 50), parseInt(e.target.value))
+    );
     this.setState({ arraySizeInput: size }, () => {
       this.createArray(size);
     });
+  };
+
+  handleInputChange = (e) => {
+    const value = parseInt(e.target.value);
+    this.setState({ target: value });
   };
 
   componentDidMount() {
@@ -235,39 +254,53 @@ class Visualize extends Component {
     });
   }
 
+
   randomize = () => {
     this.createArray(this.state.length);
   };
+sortFunc = (e) => {
+  e.preventDefault();
+  const { arr, target } = this.state;
+  let results = [];
+  let comparisonCount = 0;
 
-  sortFunc = (e) => {
-    e.preventDefault();
-    const { arr, length, method } = this.state;
-    let results = [];
-    let comparisonCount = 0;
+  // Reset results and comparisonCount before new search
+  this.setState({ results: [], comparisonCount: 0 });
 
-    document.getElementById('error').style = 'display:none';
+  document.getElementById('error').style.display = 'none';
 
-    if (method === 'Linear Search') {
-      const target = prompt('Enter the value to search for:');
-      if (target !== null) {
-        const searchResult = linearSearch(arr, length, parseInt(target));
-        results = searchResult.result;
-        comparisonCount = searchResult.comparisonCount;
-      }
-    } else if (method === 'Binary Search') {
-      arr.sort((a, b) => a.value - b.value); // Binary search requires a sorted array
-      const target = prompt('Enter the value to search for:');
-      if (target !== null) {
-        const searchResult = binarySearch(arr, parseInt(target));
-        results = searchResult.result;
-        comparisonCount = searchResult.comparisonCount;
-      }
+  // Validation for target input
+  if (!isNaN(parseInt(target)) && target >= 30 && target <= 170) {
+    if (this.state.method === 'Linear Search') {
+      const searchResult = linearSearch(arr, arr.length, target);
+      results = searchResult.result;
+      comparisonCount = searchResult.comparisonCount;
+    } else if (this.state.method === 'Binary Search') {
+      // Ensure the array is sorted before performing binary search
+      const sortedArr = [...arr].sort((a, b) => a.value - b.value);
+      const searchResult = binarySearch(sortedArr, target);
+      results = searchResult.result;
+      comparisonCount = searchResult.comparisonCount;
+
+      // Set the sorted array back into state to visualize properly
+      this.setState({ arr: sortedArr });
     }
 
-    this.setState({ results, comparisonCount }, () => {
-      this.playPause();
-    });
-  };
+    // Check if results are empty, indicating the element was not found
+    if (results.length === 0) {
+      this.setState({ comparisonResult: 'Element not found in the array.' });
+    } else {
+      this.setState({ results, comparisonCount, target, comparisonResult: '' }, () => {
+        this.playPause();
+      });
+    }
+  } else {
+    // Set an error message in the state instead of using alert
+    this.setState({ errorMessage: 'Please enter a valid number within the array range.' });
+    document.getElementById('error').style.display = 'block';
+  }
+};
+
 
   playPause = () => {
     if (this.state.isSorting) {
@@ -278,18 +311,29 @@ class Visualize extends Component {
     this.setState({ isSorting: !this.state.isSorting });
   };
 
-  runSortingAnimation = () => {
+ runSortingAnimation = () => {
     const { results, speed } = this.state;
 
     const intervalId = setInterval(() => {
       this.setState((prevState) => {
         if (prevState.currentStep < results.length) {
-          const { arr: newArr, comparisonCount } = results[prevState.currentStep];
+          const {
+            arr: newArr,
+            low,
+            mid,
+            high,
+            comparisonResult,
+            comparisonCount,
+          } = results[prevState.currentStep];
 
           return {
             arr: newArr,
             currentStep: prevState.currentStep + 1,
             comparisonCount,
+            low: low !== null ? low : null,  // Keep low index
+            mid: mid !== null ? mid : null,   // Keep mid index
+            high: high !== null ? high : null, // Keep high index
+            comparisonResult,
           };
         } else {
           clearInterval(intervalId);
@@ -299,14 +343,15 @@ class Visualize extends Component {
     }, speed);
 
     this.setState({ currentInterval: intervalId });
-  };
+};
+
 
   changeSpeed = (e) => {
     this.setState({
       speed: 1100 - e.target.value,
     });
   };
-
+  
   getAlgorithmTheory = () => {
     const { method } = this.state;
     switch (method) {
@@ -380,11 +425,11 @@ otherwise, the search continues till the end of the dataset.<br/><br/>
           </tr>
           <tr>
               <td>Average Case</td>
-              <td>O(n log n)</td>
+              <td>O(log n)</td>
           </tr>
           <tr>
               <td>Worst Case</td>
-              <td>O(n log n)</td>
+              <td>O(log n)</td>
           </tr>
       </tbody>
   </table><br></br>
@@ -436,7 +481,7 @@ otherwise, the search continues till the end of the dataset.<br/><br/>
             </a>
             <button
               className="navbar-toggler"
-              type="button"
+              type="button"   
               data-toggle="collapse"
               data-target="#navbarSupportedContent"
               aria-controls="navbarSupportedContent"
@@ -445,135 +490,200 @@ otherwise, the search continues till the end of the dataset.<br/><br/>
             >
               <span className="navbar-toggler-icon"></span>
             </button>
+            
 
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul className="navbar-nav mr-auto">
-                <li className="nav-item">
-                  <a className="nav-link" href="#" onClick={this.randomize}>
-                    Randomize
-                  </a>
-                </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdownMenuLink"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    {this.state.method}
-                  </a>
-                  <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => this.setState({ method: 'Linear Search' })}
-                    >
-                      Linear Search
-                    </a>
-                    <a
-                      className="dropdown-item"
-                      href="#"
-                      onClick={() => this.setState({ method: 'Binary Search' })}
-                    >
-                      Binary Search
-                    </a>
-                  </div>
-                </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    Controls
-                  </a>
-                  <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li className="ml-3 nav-item">
-                      <a className="nav-link">Array Size</a>
-                      <input
-                        onChange={this.handleArraySizeInput}
-                        type="number"
-                        min="2"
-                        max={Math.floor(window.screen.width / 10)}
-                        value={this.state.arraySizeInput}
-                        id="arraySizeInput"
-                        className="form-control"
-                      />
-                    </li>
-                    <li className="ml-3 nav-item">
-                      <a className="nav-link">Increase Speed</a>
-                      <input
-                        onChange={this.changeSpeed}
-                        type="range"
-                        min="100"
-                        max={1000}
-                        defaultValue={500}
-                        id="changeSpeed"
-                      />
-                    </li>
-                  </div>
-                </li>
-                <div
-                  id="error"
-                  className="alert alert-danger"
-                  style={{ marginLeft: '10px', display: 'none' }}
-                  role="alert"
-                >
-                  Select an algorithm first!
-                </div>
-              </ul>
-              <form className="form-inline my-2 my-lg-0">
-                <button
-                  className="btn btn-outline-success my-2 my-sm-0"
-                  type="submit"
-                  onClick={this.sortFunc}
-                >
-                  Search
-                </button>
-              </form>
-              <button className="btn btn-primary ml-2" onClick={this.playPause}>
-                {this.state.isSorting ? 'Pause' : 'Play'}
-              </button>{' '}
-            </div>
-          </nav>
-
-          <div className="bars" id="bars" style={{ margin: '0px' }}>
-  {this.state.arr && this.state.arr.length > 0 ? (
-    this.state.arr.map((element, index) => (
-      <motion.div
-        key={element.id}
-        layout
-        transition={springAnim}
-        className={`bar ${element.style}`}  // Assign the style based on the element state
-        id={element.id}
-        style={{ height: element.value * 3, order: index }}
+  <ul className="navbar-nav mr-auto">
+    <li className="nav-item">
+      <a className="nav-link" href="#" onClick={this.randomize}>
+        Randomize
+      </a>
+    </li>
+    <li className="nav-item dropdown">
+      <a
+        className="nav-link dropdown-toggle"
+        href="#"
+        id="navbarDropdownMenuLink"
+        role="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
       >
-        {element.value}
-      </motion.div>
-    ))
-  ) : (
-    <div>Search Completed!</div>
-  )}
+        {this.state.method}
+      </a>
+      <div
+        className="dropdown-menu"
+        aria-labelledby="navbarDropdownMenuLink"
+      >
+        
+        <a
+          className="dropdown-item"
+          href="#"
+          onClick={() =>
+            this.setState({ method: 'Linear Search' })
+          }
+        >
+          Linear Search
+        </a>
+        <a
+          className="dropdown-item"
+          href="#"
+          onClick={() =>
+            this.setState({ method: 'Binary Search' })
+          }
+        >
+          Binary Search
+        </a>
+      </div>
+    </li>
+    <li className="nav-item dropdown">
+      <a
+        className="nav-link dropdown-toggle"
+        href="#"
+        id="navbarDropdown"
+        role="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        Controls
+      </a>
+      <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li className="ml-3 nav-item">
+          <a className="nav-link">Array Size</a>
+          <input
+            onChange={this.handleArraySizeInput}
+            type="number"
+            min="2"
+            max={Math.floor(window.screen.width / 10)}
+            value={this.state.arraySizeInput}
+            id="arraySizeInput"
+            className="form-control"
+          />
+        </li>
+        <li className="ml-3 nav-item">
+          <a className="nav-link">Increase Speed</a>
+          <input
+            onChange={this.changeSpeed}
+            type="range"
+            min="100"
+            max="1000"
+            defaultValue={500}
+            id="changeSpeed"
+            className="form-control"
+          />
+        </li>
+      </div>
+    </li>
+    {/* Added input element for target value after Controls */}
+    <li className="nav-item ml-3">
+  <form onSubmit={this.sortFunc} className="form-inline">
+    <label htmlFor="target" className="mr-2" style={{ color: '#000000' }}>Target Value:</label> {/* Set label color to black */}
+    <input
+      type="number"
+      value={this.state.target}
+      onChange={this.handleInputChange}
+      className="form-control ml-2" // Existing class for input field
+      style={{ 
+        width: '100px', // Set width to match other elements in navbar
+        backgroundColor: '#054d4d', // Set input background color
+        color: '#FFFFFF', // Set input text color to black for readability
+        border: 'none', // Remove border
+        outline: 'none' // Remove outline on focus
+      }}
+      maxLength={3} // Limits input to 4 digits
+      min={0} // Optional: set a minimum value
+      max={999} // Set maximum value for 4-digit input
+    />
+  </form>
+</li>
+
+
+    <div
+      id="error"
+      className="alert alert-danger"
+      style={{ marginLeft: '10px', display: 'none' }}
+      role="alert"
+    >
+      Enter the target value first!
+    </div>
+  </ul>
+  <button
+    className="btn mr-2" // Increased margin-right for more space
+    onClick={() => window.location.href = '/Suser'}
+    style={{ backgroundColor: '#d9534f', color: 'white' }} // Nicer red shade
+  >
+    Try Custom Input
+  </button>
+  <button
+    className="btn btn-outline-success my-2 my-sm-0"
+    type="submit"
+    onClick={this.sortFunc}
+  >
+    Search
+  </button>
+  <button className="btn btn-primary ml-2" onClick={this.playPause}>
+    {this.state.isSorting ? 'Pause' : 'Play'}
+  </button>
+</div>
+          </nav>
+       <div className="bars1" id="bars1" style={{ margin: '0px' }}>
+            {this.state.arr && this.state.arr.length > 0 ? (
+              this.state.arr.map((element, index) => (
+                <motion.div
+                  key={element.id}
+                  layout
+                  transition={springAnim}
+                  className={`bar1 ${element.style}`} // Assign the style based on the element state
+                  id={element.id}
+                  style={{ height: element.value * 3, order: index }}
+                >
+                  {element.value}
+                </motion.div>
+              ))
+            ) : (
+              <div style={{ color: 'black' }}>Search Completed!</div>
+            )}
+          </div>
+
+          <div
+            className="info"
+            style={{
+              backgroundColor: '#000000f6',
+              padding: '10px',
+              borderRadius: '0px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'white', margin: '-20px 0' }}>
+  <p style={{ margin: '0 70px' }}>No. of Comparisons: {this.state.comparisonCount}</p>
+
+  {/* Render comparison details only if Binary Search is selected */}
+  {this.state.low !== null && this.state.mid !== null && this.state.high !== null && this.state.method === 'Binary Search' && (
+  <>
+    <p style={{ margin: '0 50px' }}>Low: {this.state.low}</p>
+    <p style={{ margin: '0 0px' }}>Mid: {this.state.mid}</p>
+    <p style={{ margin: '0 50px' }}>High: {this.state.high}</p>
+    <p style={{ margin: '0 50px' }}>Comparison: {this.state.comparisonResult}</p>
+  </>
+)}
 </div>
 
-          <div className="info" style={{ backgroundColor: '#000000f6', padding: '10px', borderRadius: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <p style={{ color: 'white', margin: '5px 0' }}>No. of Comparisons: {this.state.comparisonCount}</p>
+
+
           </div>
+
           <div className="theory-section">
-          <h3>{this.state.method}</h3>
-          <p>{this.getAlgorithmTheory()}</p>
-        </div>
+            <h3>{this.state.method}</h3>
+            <p>{this.getAlgorithmTheory()}</p>
+          </div>
         </div>
       </>
     );
   }
 }
 
-export default Visualize; 
+export default Visualize;

@@ -1,0 +1,79 @@
+
+.bar{
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding-top: 7px;
+  font-family: sans-serif;
+  font-weight: 700;
+  display: inline-block;
+  color:white;
+  width:40px;
+  margin-left:6px;
+  background-color:#5bc9b1;
+}
+.bar-sorted{
+  background-color:#57a846;
+}
+.bar-swap{
+  background-color:#b979ec;
+}
+.bar-min{
+  background-color: red;
+}
+
+.bars {
+  background-color: #000000f6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 80vh; 
+  width: 100.14vw; 
+  position: relative; 
+  padding-bottom: 75px;
+  z-index: 2;
+}
+
+.tc,th,td{
+
+  /* borderCollapse 'collapse',
+  width: '30%',
+  textAlign:'center',
+  border: '2px solid white' // Adding a border to the table */
+  border-collapse: collapse;
+  width: 30%;
+  text-align: center;
+  border: 2px solid white;
+
+}
+.bars .bar {
+  width: 40px;
+  margin: 0 5px; 
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
+.bars .bar .bar-number {
+  position: absolute;
+  bottom: -50px;  
+  text-align: center;
+  font-weight: bold;
+}
+
+.bars .bar .bar-height {
+  height: 100px; 
+  transform: rotate(180deg);
+}
+.theory-section {
+  background-color: #000000f6; /* You can set any background color */
+  padding: 20px;
+  width: 100%; /* Ensures it spans the full width */
+  box-sizing: border-box; /* To include padding in the element's width/height */
+  position: relative;
+  top: 0px; /* Adjusts the gap between the bars and the section */
+  z-index: 1;
+  /* text-align: center; */
+  font-family: sans-serif;
+  color: #ffffff;
+}

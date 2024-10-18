@@ -29,46 +29,67 @@ class User extends Component {
       currentStep: 0,
       results: [],
       arraySizeInput: Math.floor(window.innerWidth / 50 / 2), // Default value for array size
-      defaultBarValue: 100, // Default value for each bar
+      // defaultBarValue: 100, // Default value for each bar
     };
   }
 
-  createArray = (size) => {
-    let arr = [];
-    for (let i = 0; i < size; i++) {
-      arr.push({
-        value: this.state.defaultBarValue, // Set default value
-        id: 'id-' + i,
-      });
-    }
-    this.setState({
-      arr: arr,
-      length: size,
-      swapCount: 0,  // Reset counts when array is created
-      passCount: 0,
-      isSorting: false,
-      currentStep: 0,
-      results: [],
-    });
-  };
+  // createArray = (size) => {
+  //   let arr = [];
+  //   for (let i = 0; i < size; i++) {
+  //     arr.push({
+  //       value: this.state.defaultBarValue, // Set default value
+  //       id: 'id-' + i,
+  //     });
+  //   }
+  //   this.setState({
+  //     arr: arr,
+  //     length: size,
+  //     swapCount: 0,  // Reset counts when array is created
+  //     passCount: 0,
+  //     isSorting: false,
+  //     currentStep: 0,
+  //     results: [],
+  //   });
+  // };
+  createArrayFromInput = () => {
+    let values = this.state.arrayInput
+        .split(',')
+        .map((val) => parseInt(val.trim(), 10))
+        .filter((val) => !isNaN(val));
+    const arr = values.map((value, index) => ({
+        value: value,
+        id: 'id-' + index,
+    }));
+    this.setState({ arr, swapCount: 0, passCount: 0, isSorting: false, currentStep: 0, results: [] });
+};
 
-  handleArraySizeInput = (e) => {
-    const size = Math.max(2, Math.min(Math.floor(window.screen.width / 50), parseInt(e.target.value)));
-    this.setState({ arraySizeInput: size }, () => {
-      this.createArray(size);
-    });
+
+  // handleArraySizeInput = (e) => {
+  //   const size = Math.max(2, Math.min(Math.floor(window.screen.width / 50), parseInt(e.target.value)));
+  //   this.setState({ arraySizeInput: size }, () => {
+  //     this.createArray(size);
+  //   });
+  // };
+
+  // componentDidMount() {
+  //   this.createArray(this.state.arraySizeInput);
+  //   window.addEventListener('resize', () => {
+  //     this.createArray(this.state.arraySizeInput);
+  //   });
+  // }
+  handleArrayInputChange = (e) => {
+    this.setState({ arrayInput: e.target.value });
   };
 
   componentDidMount() {
-    this.createArray(this.state.arraySizeInput);
     window.addEventListener('resize', () => {
-      this.createArray(this.state.arraySizeInput);
+      this.createArray(this.state.arr.length);
     });
   }
 
   sortFunc = (e) => {
     e.preventDefault();
-    const { arr, length, method } = this.state;
+    const { arr, method } = this.state;
     let results = [];
     let swapCount = 0;
     let passCount = 0;
@@ -79,12 +100,12 @@ class User extends Component {
       document.getElementById('error').style = 'display:block';
     } else {
       let sortedResult;
-      if (method === 'Bubble Sort') sortedResult = bubbleSort(arr, length);
-      else if (method === 'Selection Sort') sortedResult = selectionSort(arr, length);
-      else if (method === 'Merge Sort') sortedResult = mergeSort(arr, length);
+      if (method === 'Bubble Sort') sortedResult = bubbleSort(arr, arr.length);
+      else if (method === 'Selection Sort') sortedResult = selectionSort(arr, arr.length);
+      else if (method === 'Merge Sort') sortedResult = mergeSort(arr, arr.length);
       else if (method === 'Quick Sort') sortedResult = quickSort(arr, arr.length);
-      else if (method === 'Insertion Sort') sortedResult = insertionSort(arr, length);
-      else if (method === 'Heap Sort') sortedResult = heapSort(arr, length);
+      else if (method === 'Insertion Sort') sortedResult = insertionSort(arr, arr.length);
+      else if (method === 'Heap Sort') sortedResult = heapSort(arr, arr.length);
 
       // Extract the results, swap count, and pass count
       results = sortedResult.result;
@@ -108,28 +129,25 @@ class User extends Component {
 
   runSortingAnimation = () => {
     const { results, speed } = this.state;
-  
     const intervalId = setInterval(() => {
-      this.setState((prevState) => {
-        if (prevState.currentStep < results.length) {
-          const { arr: newArr, swapCount, passCount } = results[prevState.currentStep];
-  
-          // Return new state
-          return {
-            arr: newArr,
-            currentStep: prevState.currentStep + 1,
-            swapCount,  // Dynamically update swap count
-            passCount,   // Dynamically update pass count
-          };
-        } else {
-          clearInterval(intervalId);
-          return { isSorting: false, currentStep: 0 }; // Reset after finishing
-        }
-      });
+        this.setState((prevState) => {
+            if (prevState.currentStep < results.length) {
+                const { arr: newArr, swapCount, passCount } = results[prevState.currentStep];
+                return {
+                    arr: newArr,
+                    currentStep: prevState.currentStep + 1,
+                    swapCount,  // Dynamically update swap count
+                    passCount,   // Dynamically update pass count
+                };
+            } else {
+                clearInterval(intervalId);
+                return { isSorting: false, currentStep: 0 }; // Reset after finishing
+            }
+        });
     }, speed);
-  
     this.setState({ currentInterval: intervalId });
-  };
+};
+
   
   changeSpeed = (e) => {
     this.setState({
@@ -475,29 +493,27 @@ class User extends Component {
     }
   };
  
-
   handleValueChange = (index, e) => {
-    // Allow user to type any value
     const newValue = e.target.value;
     this.setState((prevState) => {
-      const newArr = [...prevState.arr];
-      newArr[index].value = newValue; // Update the value as user types
-      return { arr: newArr };
+        const newArr = [...prevState.arr];
+        newArr[index].value = newValue; // Update the value as user types
+        return { arr: newArr };
     });
 };
 
 handleBlur = (index, e) => {
-    // Validate the value on blur (when user leaves the input field)
     let value = parseInt(e.target.value, 10);
     if (isNaN(value)) value = this.state.defaultBarValue; // Set default value if empty or invalid
     value = Math.max(30, Math.min(170, value)); // Clamp the value within 30 to 170
 
     this.setState((prevState) => {
-      const newArr = [...prevState.arr];
-      newArr[index].value = value; // Set the final valid value
-      return { arr: newArr };
+        const newArr = [...prevState.arr];
+        newArr[index].value = value; // Set the final valid value
+        return { arr: newArr };
     });
 };
+
 
     render() {
         return (
@@ -511,6 +527,7 @@ handleBlur = (index, e) => {
                 <a className="navbar-brand" href="/">
                 Home
                 </a>
+               
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item dropdown">
@@ -606,6 +623,7 @@ handleBlur = (index, e) => {
                             id="changeSpeed"
                         />
                         </li>
+
                     </div>
                     </li>
                     <div
@@ -617,6 +635,19 @@ handleBlur = (index, e) => {
                     Select an algorithm first!
                     </div>
                 </ul>
+                <input
+            type="text"
+            className="array-input"
+            placeholder="Enter array values (comma separated)"
+            value={this.state.arrayInput}
+            style={{margin: '10px',
+            fontSize:'14px'
+            }}
+            onChange={this.handleArrayInputChange}
+          />
+          <button className="btn btn-outline-success my-2 my-sm-0" onClick={this.createArrayFromInput}
+          style={{margin: '10px'}}>Generate</button>
+          <br />
                 <form className="form-inline my-2 my-lg-0">
                     <button
                     className="btn btn-outline-success my-2 my-sm-0"
@@ -625,12 +656,15 @@ handleBlur = (index, e) => {
                     >
                     Sort
                     </button>
+                    
                 </form>
                 <button className="btn btn-primary ml-2" onClick={this.playPause}>
                     {this.state.isSorting ? 'Pause' : 'Play'}
                 </button>{' '}
                 </div>
             </nav>
+        
+       
 
             <div className="bars" id="bars" style={{ margin: '0px' }}>
   {this.state.arr && this.state.arr.length > 0 ? (
@@ -666,7 +700,7 @@ handleBlur = (index, e) => {
       </motion.div>
     ))
   ) : (
-    <div>Sorted Successfully!</div>
+    <div>Generate Array to Sort!!</div>
   )}
 </div>
 
@@ -686,3 +720,576 @@ handleBlur = (index, e) => {
     }
 
     export default User;
+
+
+
+
+// import './User.css';
+// import React, { Component } from 'react';
+// import { motion } from 'framer-motion';
+// import selectionSort from '../algorithms/SelectionSort';
+// import mergeSort from '../algorithms/MergeSort';
+// import quickSort from '../algorithms/QuickSort';
+// import bubbleSort from '../algorithms/BubbleSort';
+// import insertionSort from '../algorithms/InsertionSort';
+// import heapSort from '../algorithms/HeapSort';
+
+// const springAnim = {
+//   type: 'spring',
+//   damping: 20,
+//   stiffness: 300,
+// };
+
+// class User extends Component {
+//   constructor() {
+//     super();
+//     this.state = {
+//       arr: [],
+//       method: localStorage.getItem('selectedAlgorithm') || 'Algorithms',
+//       swapCount: 0, // Track number of swaps
+//       passCount: 0, // Track number of passes
+//       speed: 600,
+//       isSorting: false,
+//       currentInterval: null,
+//       currentStep: 0,
+//       results: [],
+//       arrayInput: '', // For manual input array values
+//     };
+//   }
+
+//   createArrayFromInput = () => {
+//     let values = this.state.arrayInput
+//       .split(',')
+//       .map((val) => parseInt(val.trim(), 10))
+//       .filter((val) => !isNaN(val));
+//     const arr = values.map((value, index) => ({
+//       value: value,
+//       id: 'id-' + index,
+//     }));
+//     this.setState({ arr, swapCount: 0, passCount: 0, isSorting: false, currentStep: 0, results: [] });
+//   };
+
+//   handleArrayInputChange = (e) => {
+//     this.setState({ arrayInput: e.target.value });
+//   };
+
+//   componentDidMount() {
+//     window.addEventListener('resize', () => {
+//       this.createArray(this.state.arr.length);
+//     });
+//   }
+
+//   sortFunc = (e) => {
+//     e.preventDefault();
+//     const { arr, method } = this.state;
+//     let results = [];
+//     let swapCount = 0;
+//     let passCount = 0;
+
+//     document.getElementById('error').style = 'display:none';
+
+//     if (method === 'Algorithms') {
+//       document.getElementById('error').style = 'display:block';
+//     } else {
+//       let sortedResult;
+//       if (method === 'Bubble Sort') sortedResult = bubbleSort(arr, arr.length);
+//       else if (method === 'Selection Sort') sortedResult = selectionSort(arr, arr.length);
+//       else if (method === 'Merge Sort') sortedResult = mergeSort(arr, arr.length);
+//       else if (method === 'Quick Sort') sortedResult = quickSort(arr, arr.length);
+//       else if (method === 'Insertion Sort') sortedResult = insertionSort(arr, arr.length);
+//       else if (method === 'Heap Sort') sortedResult = heapSort(arr, arr.length);
+
+//       // Extract the results, swap count, and pass count
+//       results = sortedResult.result;
+//       swapCount = sortedResult.swapCount;
+//       passCount = sortedResult.passCount;
+
+//       this.setState({ results, swapCount, passCount }, () => {
+//         this.playPause();
+//       });
+//     }
+//   };
+
+//   playPause = () => {
+//     if (this.state.isSorting) {
+//       clearInterval(this.state.currentInterval);
+//     } else {
+//       this.runSortingAnimation();
+//     }
+//     this.setState({ isSorting: !this.state.isSorting });
+//   };
+
+//   runSortingAnimation = () => {
+//     const { results, speed } = this.state;
+
+//     const intervalId = setInterval(() => {
+//       this.setState((prevState) => {
+//         if (prevState.currentStep < results.length) {
+//           const { arr: newArr, swapCount, passCount } = results[prevState.currentStep];
+
+//           // Return new state
+//           return {
+//             arr: newArr,
+//             currentStep: prevState.currentStep + 1,
+//             swapCount, // Dynamically update swap count
+//             passCount, // Dynamically update pass count
+//           };
+//         } else {
+//           clearInterval(intervalId);
+//           return { isSorting: false, currentStep: 0 }; // Reset after finishing
+//         }
+//       });
+//     }, speed);
+
+//     this.setState({ currentInterval: intervalId });
+//   };
+
+//   changeSpeed = (e) => {
+//     this.setState({
+//       speed: 1100 - e.target.value,
+//     });
+//   };
+
+//   getAlgorithmTheory = () => {
+//     switch (this.state.method) {
+//       case 'Bubble Sort':
+//         return 'Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.';
+//       case 'Selection Sort':
+//         return 'Selection Sort works by repeatedly finding the minimum element from the unsorted part and swapping it with the first unsorted element.';
+//       case 'Merge Sort':
+//         return 'Merge Sort is a divide-and-conquer algorithm that splits the array in half, recursively sorts each half, and merges them back together.';
+//       case 'Quick Sort':
+//         return 'Quick Sort is a divide-and-conquer algorithm that selects a pivot, partitions the array around the pivot, and recursively sorts the partitions.';
+//       case 'Insertion Sort':
+//         return 'Insertion Sort builds the sorted array one item at a time, inserting each element into its correct position.';
+//       case 'Heap Sort':
+//         return 'Heap Sort builds a max-heap from the input data and repeatedly extracts the maximum element to build the sorted array.';
+//       default:
+//         return 'Select an algorithm to see its description.';
+//     }
+//   };
+
+//   render() {
+//     return (
+//       <>
+//         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"></link>
+//         <div>
+//           <nav className="navbar navbar-expand-lg navbar-light bg-light">
+//             <a className="navbar-brand" href="/">
+//               Home
+//             </a>
+//             <div className="collapse navbar-collapse" id="navbarSupportedContent">
+//               <ul className="navbar-nav mr-auto">
+//                 <li className="nav-item dropdown">
+//                   <a
+//                     className="nav-link dropdown-toggle"
+//                     href="#"
+//                     id="navbarDropdownMenuLink"
+//                     role="button"
+//                     data-toggle="dropdown"
+//                     aria-haspopup="true"
+//                     aria-expanded="false"
+//                   >
+//                     {this.state.method}
+//                   </a>
+//                   <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+//                     <a className="dropdown-item" href="#" onClick={() => this.setState({ method: 'Bubble Sort' })}>
+//                       Bubble Sort
+//                     </a>
+//                     <a className="dropdown-item" href="#" onClick={() => this.setState({ method: 'Quick Sort' })}>
+//                       Quick Sort
+//                     </a>
+//                     <a className="dropdown-item" href="#" onClick={() => this.setState({ method: 'Merge Sort' })}>
+//                       Merge Sort
+//                     </a>
+//                     <a className="dropdown-item" href="#" onClick={() => this.setState({ method: 'Insertion Sort' })}>
+//                       Insertion Sort
+//                     </a>
+//                     <a className="dropdown-item" href="#" onClick={() => this.setState({ method: 'Selection Sort' })}>
+//                       Selection Sort
+//                     </a>
+//                     <a className="dropdown-item" href="#" onClick={() => this.setState({ method: 'Heap Sort' })}>
+//                       Heap Sort
+//                     </a>
+//                   </div>
+//                 </li>
+//                 <li className="nav-item">
+//                   <a className="nav-link" href="/">
+//                     {this.getAlgorithmTheory()}
+//                   </a>
+//                 </li>
+//               </ul>
+//             </div>
+//           </nav>
+//         </div>
+
+//         <div className="User">
+//           <input
+//             type="text"
+//             className="array-input"
+//             placeholder="Enter array values (comma separated)"
+//             value={this.state.arrayInput}
+//             onChange={this.handleArrayInputChange}
+//           />
+//           <button onClick={this.createArrayFromInput}>Create Array from Input</button>
+//           <br />
+//           <button onClick={this.sortFunc} id="sortButton">
+//             Sort
+//           </button>
+//           <div id="error" className="error">
+//             Choose an Algorithm
+//           </div>
+
+//           <br />
+//           <div className="sorting">
+//             <motion.div className="sorting-box">
+//               {this.state.arr.map((bar) => (
+//                 <motion.div
+//                   key={bar.id}
+//                   className="sorting-bar"
+//                   animate={{
+//                     height: `${bar.value * 2}px`, // Adjust scaling as per the size of the array values
+//                   }}
+//                   transition={springAnim}
+//                 >
+//                   {bar.value}
+//                 </motion.div>
+//               ))}
+//             </motion.div>
+//           </div>
+//           <br />
+//           <input
+//             type="range"
+//             min="30"
+//             max="600"
+//             value={1100 - this.state.speed}
+//             onChange={this.changeSpeed}
+//           />
+//           <button onClick={this.playPause}>{this.state.isSorting ? 'Pause' : 'Play'}</button>
+
+//           <div>
+//             <p>Swaps: {this.state.swapCount}</p>
+//             <p>Passes: {this.state.passCount}</p>
+//           </div>
+//         </div>
+//       </>
+//     );
+//   }
+// }
+
+// export default User;
+
+
+
+
+
+// // import './User.css';
+// // import React, { Component } from 'react';
+// // import { motion } from 'framer-motion';
+// // import selectionSort from '../algorithms/SelectionSort';
+// // import mergeSort from '../algorithms/MergeSort';
+// // import quickSort from '../algorithms/QuickSort';
+// // import bubbleSort from '../algorithms/BubbleSort';
+// // import insertionSort from '../algorithms/InsertionSort';
+// // import heapSort from '../algorithms/HeapSort';
+
+// // const springAnim = {
+// //   type: 'spring',
+// //   damping: 20,
+// //   stiffness: 300,
+// // };
+
+// // class User extends Component {
+// //   constructor() {
+// //     super();
+// //     this.state = {
+// //       arr: [],
+// //       method: localStorage.getItem('selectedAlgorithm') || 'Algorithms',
+// //       length: 0,
+// //       swapCount: 0,   // Track number of swaps
+// //       passCount: 0,   // Track number of passes
+// //       speed: 600,
+// //       isSorting: false,
+// //       currentInterval: null,
+// //       currentStep: 0,
+// //       results: [],
+// //       arrayInput: '',  // Store user input as a string
+// //       defaultBarValue: 100, // Default value for each bar
+// //     };
+// //   }
+
+// //   createArrayFromInput = () => {
+// //     // Convert the comma-separated string to an array of numbers
+// //     const values = this.state.arrayInput.split(',').map((v) => {
+// //       const val = parseInt(v.trim(), 10);
+// //       return isNaN(val) ? this.state.defaultBarValue : val;  // Handle invalid numbers
+// //     });
+
+// //     const arr = values.map((value, i) => ({
+// //       value: value,
+// //       id: 'id-' + i,
+// //     }));
+
+// //     this.setState({
+// //       arr: arr,
+// //       length: values.length,
+// //       swapCount: 0,  // Reset counts when array is created
+// //       passCount: 0,
+// //       isSorting: false,
+// //       currentStep: 0,
+// //       results: [],
+// //     });
+// //   };
+
+// //   handleArrayInputChange = (e) => {
+// //     this.setState({ arrayInput: e.target.value });
+// //   };
+
+// //   componentDidMount() {
+// //     // Set up a default array on mount
+// //     this.createArrayFromInput();
+// //   }
+
+// //   sortFunc = (e) => {
+// //     e.preventDefault();
+// //     const { arr, length, method } = this.state;
+// //     let results = [];
+// //     let swapCount = 0;
+// //     let passCount = 0;
+
+// //     document.getElementById('error').style = 'display:none';
+
+// //     if (method === 'Algorithms') {
+// //       document.getElementById('error').style = 'display:block';
+// //     } else {
+// //       let sortedResult;
+// //       if (method === 'Bubble Sort') sortedResult = bubbleSort(arr, length);
+// //       else if (method === 'Selection Sort') sortedResult = selectionSort(arr, length);
+// //       else if (method === 'Merge Sort') sortedResult = mergeSort(arr, length);
+// //       else if (method === 'Quick Sort') sortedResult = quickSort(arr, arr.length);
+// //       else if (method === 'Insertion Sort') sortedResult = insertionSort(arr, length);
+// //       else if (method === 'Heap Sort') sortedResult = heapSort(arr, length);
+
+// //       results = sortedResult.result;
+// //       swapCount = sortedResult.swapCount;
+// //       passCount = sortedResult.passCount;
+
+// //       this.setState({ results, swapCount, passCount }, () => {
+// //         this.playPause();
+// //       });
+// //     }
+// //   };
+
+// //   playPause = () => {
+// //     if (this.state.isSorting) {
+// //       clearInterval(this.state.currentInterval);
+// //     } else {
+// //       this.runSortingAnimation();
+// //     }
+// //     this.setState({ isSorting: !this.state.isSorting });
+// //   };
+
+// //   runSortingAnimation = () => {
+// //     const { results, speed } = this.state;
+
+// //     const intervalId = setInterval(() => {
+// //       this.setState((prevState) => {
+// //         if (prevState.currentStep < results.length) {
+// //           const { arr: newArr, swapCount, passCount } = results[prevState.currentStep];
+
+// //           return {
+// //             arr: newArr,
+// //             currentStep: prevState.currentStep + 1,
+// //             swapCount,
+// //             passCount,
+// //           };
+// //         } else {
+// //           clearInterval(intervalId);
+// //           return { isSorting: false, currentStep: 0 }; // Reset after finishing
+// //         }
+// //       });
+// //     }, speed);
+
+// //     this.setState({ currentInterval: intervalId });
+// //   };
+
+// //   changeSpeed = (e) => {
+// //     this.setState({
+// //       speed: 1100 - e.target.value,
+// //     });
+// //   };
+
+// //   render() {
+// //     return (
+// //       <>
+// //         <link
+// //           href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+// //           rel="stylesheet"
+// //         ></link>
+// //         <div>
+// //           <nav className="navbar navbar-expand-lg navbar-light bg-light">
+// //             <a className="navbar-brand" href="/">
+// //               Home
+// //             </a>
+// //             <div className="collapse navbar-collapse" id="navbarSupportedContent">
+// //               <ul className="navbar-nav mr-auto">
+// //                 <li className="nav-item dropdown">
+// //                   <a
+// //                     className="nav-link dropdown-toggle"
+// //                     href="#"
+// //                     id="navbarDropdownMenuLink"
+// //                     role="button"
+// //                     data-toggle="dropdown"
+// //                     aria-haspopup="true"
+// //                     aria-expanded="false"
+// //                   >
+// //                     {this.state.method}
+// //                   </a>
+// //                   <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+// //                     <a
+// //                       className="dropdown-item"
+// //                       href="#"
+// //                       onClick={() => this.setState({ method: 'Bubble Sort' })}
+// //                     >
+// //                       Bubble Sort
+// //                     </a>
+// //                     <a
+// //                       className="dropdown-item"
+// //                       href="#"
+// //                       onClick={() => this.setState({ method: 'Quick Sort' })}
+// //                     >
+// //                       Quick Sort
+// //                     </a>
+// //                     <a
+// //                       className="dropdown-item"
+// //                       href="#"
+// //                       onClick={() => this.setState({ method: 'Merge Sort' })}
+// //                     >
+// //                       Merge Sort
+// //                     </a>
+// //                     <a
+// //                       className="dropdown-item"
+// //                       href="#"
+// //                       onClick={() => this.setState({ method: 'Insertion Sort' })}
+// //                     >
+// //                       Insertion Sort
+// //                     </a>
+// //                     <a
+// //                       className="dropdown-item"
+// //                       href="#"
+// //                       onClick={() => this.setState({ method: 'Selection Sort' })}
+// //                     >
+// //                       Selection Sort
+// //                     </a>
+// //                     <a
+// //                       className="dropdown-item"
+// //                       href="#"
+// //                       onClick={() => this.setState({ method: 'Heap Sort' })}
+// //                     >
+// //                       Heap Sort
+// //                     </a>
+// //                   </div>
+// //                 </li>
+// //                 <li className="nav-item">
+// //                   <a className="nav-link">Array Input</a>
+// //                   <input
+// //                     type="text"
+// //                     style={{
+// //                       fontWeight: 'bold',
+// //                       width: '300px',
+// //                       textAlign: 'center',
+// //                       border: 'none',
+// //                       // background: 'transparent',
+// //                       // color: 'white',
+// //                       position: 'absolute',
+// //                       bottom: '-513px',
+// //                       left: '0%',
+// //                       // transform: 'translateX(-50%)',
+// //                     }}
+// //                     value={this.state.arrayInput}
+// //                     onChange={this.handleArrayInputChange}
+// //                     placeholder="Enter values (comma separated)"
+// //                     className="form-control"
+// //                   />
+// //                   <button
+// //                     className="btn btn-outline-success my-2 my-sm-0"
+// //                     type="button"
+// //                     onClick={this.createArrayFromInput}
+// //                     style={{
+// //                       // fontWeight: 'bold',
+// //                       // width: '300px',
+// //                       textAlign: 'center',
+// //                       // border: 'none',
+// //                       // background: 'transparent',
+// //                       // color: 'white',
+// //                       position: 'absolute',
+// //                       bottom: '-403px',
+// //                       left: '0%',
+// //                       // transform: 'translateX(-50%)',
+// //                     }}
+// //                   >
+// //                     Generate Array
+// //                   </button>
+// //                 </li>
+// //               </ul>
+// //             </div>
+// //           </nav>
+
+// //           <div className="bars" id="bars" style={{ margin: '0px' }}>
+// //             {this.state.arr && this.state.arr.length > 0 ? (
+// //               this.state.arr.map((element, index) => (
+// //                 <motion.div
+// //                   key={element.id}
+// //                   layout
+// //                   transition={springAnim}
+// //                   className={`bar ${element.style}`}
+// //                   id={element.id}
+// //                   style={{ height: element.value * 3, order: index }}
+// //                 >
+// //                   <input
+// //                     type="text"
+// //                     value={element.value}
+// //                     readOnly
+// //                     style={{
+// //                       fontWeight: 'bold',
+// //                       width: '30px',
+// //                       textAlign: 'center',
+// //                       border: 'none',
+// //                       background: 'transparent',
+// //                       color: 'white',
+// //                       position: 'absolute',
+// //                       bottom: '-3px',
+// //                       left: '50%',
+// //                       transform: 'translateX(-50%)',
+// //                     }}
+// //                   />
+// //                 </motion.div>
+// //               ))
+// //             ) : (
+// //               <div>Sorted Successfully!</div>
+// //             )}
+// //           </div>
+
+// //           <div
+// //             className="info"
+// //             style={{
+// //               backgroundColor: '#000000f6',
+// //               padding: '10px',
+// //               borderRadius: '0px',
+// //               display: 'flex',
+// //               justifyContent: 'center',
+// //               alignItems: 'center',
+// //             }}
+// //           >
+// //             <p style={{ color: 'white', margin: '5px 0' }}>No. of Swaps: {this.state.swapCount}</p>
+// //             <p style={{ color: 'white', margin: '5px 30px' }}>No. of Passes: {this.state.passCount}</p>
+// //           </div>
+// //         </div>
+// //       </>
+// //     );
+// //   }
+// // }
+
+// // export default User;
+
+

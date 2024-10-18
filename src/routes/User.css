@@ -1,3 +1,44 @@
+.User {
+  padding: 20px;
+}
+
+.array-input {
+  width: 300px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.sorting {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.sorting-box {
+  display: flex;
+  align-items: flex-end;
+  margin: 20px 0;
+}
+
+.sorting-bar {
+  width: 30px;
+  margin: 0 5px;
+  background-color: #3498db;
+  color: white;
+  text-align: center;
+  transition: height 0.2s;
+}
+
+.error {
+  color: red;
+  display: none;
+}
+
+button {
+  margin-right: 10px;
+}
 
 .bar{
     border-top-left-radius: 10px;
