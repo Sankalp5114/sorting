@@ -11,6 +11,9 @@ const springAnim = {
 };
 
 class Suser extends Component {
+  setNotFound = (a) => {
+    this.setState({ notFound: a });
+  }
   constructor() {
     super();
     this.state = {
@@ -32,7 +35,9 @@ class Suser extends Component {
       arrayInput: '', // Initialize arrayInput
       errorMessage: '', // Initialize errorMessage
       resultMessage: '', // Add this line
-
+      errorNotFound: '',
+      notFound: 0,
+      setNotFound: 0,
     };
   }
 
@@ -57,6 +62,7 @@ class Suser extends Component {
       high: null,
       comparisonResult: '',
       // Do not reset target here
+      notFound:0,
     });
   };
 
@@ -76,20 +82,21 @@ class Suser extends Component {
     let comparisonCount = 0;
 
     // Reset results and comparisonCount before new search
-    this.setState({ results: [], comparisonCount: 0 });
+    this.setState({ results: [], comparisonCount: 0, notFound: 0 });
 
     document.getElementById('error').style.display = 'none';
+    document.getElementById('error1').style.display = 'none';
 
     // Check if target is not null before proceeding
     if (target !== null) {
       if (this.state.method === 'Linear Search') {
-        const searchResult = linearSearch(arr, arr.length, target);
+        const searchResult = linearSearch(arr, arr.length, target,this.setNotFound);
         results = searchResult.result;
         comparisonCount = searchResult.comparisonCount;
       } else if (this.state.method === 'Binary Search') {
         // Ensure the array is sorted before performing binary search
         const sortedArr = [...arr].sort((a, b) => a.value - b.value);
-        const searchResult = binarySearch(sortedArr, target);
+        const searchResult = binarySearch(sortedArr, target,this.setNotFound);
         results = searchResult.result;
         comparisonCount = searchResult.comparisonCount;
 
@@ -109,7 +116,7 @@ class Suser extends Component {
       }
     } else {
       // Set an error message in the state instead of using alert
-      this.setState({ errorMessage: 'Enter a target value.' });
+      this.setState({ errorMessage: 'Enter a target value!' });
       document.getElementById('error').style.display = 'block';
     }
   };
@@ -148,6 +155,10 @@ class Suser extends Component {
             comparisonResult,
           };
         } else {
+          if(this.state.notFound === 1){
+            this.setState({ errorNotFound: 'Element Not Found!' });
+            document.getElementById('error1').style.display = 'block';
+          }
           clearInterval(intervalId);
           return { isSorting: false, currentStep: 0 };
         }
@@ -427,6 +438,14 @@ class Suser extends Component {
                 >
                   {this.state.errorMessage}
                 </div>
+                <div
+                  id="error1"
+                  className="alert alert-danger"
+                  style={{ marginLeft: '10px', display: 'none' ,width: '250px',position:"absolute",right:'42%',height:'50px'}}
+                  role="alert"
+                >
+                  {this.state.errorNotFound}
+                </div>
               </ul>
               <input
                 type="text"
@@ -475,7 +494,7 @@ class Suser extends Component {
                 </motion.div>
               ))
             ) : (
-              <div style={{ color: 'black' }}>Search Completed!</div>
+              <div style={{ color: 'white' }}>Enter Elements First!</div>
             )}
           </div>
 
