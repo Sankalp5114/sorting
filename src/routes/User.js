@@ -1,6 +1,6 @@
 import './User.css';
 import React, { Component } from 'react';
-import { motion } from 'framer-motion';
+import { color, motion } from 'framer-motion';
 import selectionSort from '../algorithms/SelectionSort';
 import mergeSort from '../algorithms/MergeSort';
 import quickSort from '../algorithms/QuickSort';
@@ -600,7 +600,7 @@ handleBlur = (index, e) => {
                         Controls
                     </a>
                     <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li className="ml-3 nav-item">
+                        {/* <li className="ml-3 nav-item">
                         <a className="nav-link">Array Size</a>
                         <input
                             onChange={this.handleArraySizeInput}
@@ -611,7 +611,7 @@ handleBlur = (index, e) => {
                             id="arraySizeInput"
                             className="form-control"
                         />
-                        </li>
+                        </li> */}
                         <li className="ml-3 nav-item">
                         <a className="nav-link">Increase Speed</a>
                         <input
@@ -700,7 +700,7 @@ handleBlur = (index, e) => {
       </motion.div>
     ))
   ) : (
-    <div>Generate Array to Sort!!</div>
+    <div style={{color:'white'}}>Generate Array to Sort!!</div>
   )}
 </div>
 
